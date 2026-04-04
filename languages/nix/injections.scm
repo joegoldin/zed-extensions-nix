@@ -165,3 +165,45 @@
   ])
   (#match? @_func "(^|\\.)writeRust(Bin)?$")
   (#set! combined))
+
+; ── Binding-name-based language injection ─────────────────────────
+; Matches `fish = '' ... ''`, `bash = '' ... ''`, etc. in attrsets
+
+(binding
+  attrpath: (attrpath
+    (identifier) @_path)
+  expression: [
+    (string_expression
+      ((string_fragment) @content
+        (#set! language "fish")))
+    (indented_string_expression
+      ((string_fragment) @content
+        (#set! language "fish")))
+  ]
+  (#eq? @_path "fish"))
+
+(binding
+  attrpath: (attrpath
+    (identifier) @_path)
+  expression: [
+    (string_expression
+      ((string_fragment) @content
+        (#set! language "bash")))
+    (indented_string_expression
+      ((string_fragment) @content
+        (#set! language "bash")))
+  ]
+  (#eq? @_path "bash"))
+
+(binding
+  attrpath: (attrpath
+    (identifier) @_path)
+  expression: [
+    (string_expression
+      ((string_fragment) @content
+        (#set! language "python")))
+    (indented_string_expression
+      ((string_fragment) @content
+        (#set! language "python")))
+  ]
+  (#match? @_path "^python(-argparse)?$"))
